@@ -1,53 +1,34 @@
-# База данных предметов: Название -> Вес
 ITEM_DATABASE = {
-    "меч": 3.0,
-    "щит": 5.0,
-    "зелье": 0.5,
-    "лук": 2.0,
-    "золото": 0.1
+    "sword": 3.0, "shield": 5.0, "potion": 0.5, "onion": 2.0, "gold": 0.1
 }
-
+MAX_WEIGHT = 10.0
 inventory = []
-max_weight = 10.0
 current_weight = 0.0
-
-print(f"--- Добро пожаловать в RPG Инвентарь! ---")
-print(f"Доступные предметы: {', '.join(ITEM_DATABASE.keys())}")
-print(f"Лимит веса: {max_weight} кг\n")
-
+print(f"--- RPG Inventory System ---")
+print(f"Items: {', '.join(ITEM_DATABASE.keys())} | Limit: {MAX_WEIGHT} kg\n")
 while True:
-    print(f"\nВаш рюкзак: {inventory}")
-    print(f"Занято: {current_weight}/{max_weight} кг")
-    
-    action = input("\nЧто сделать? (добавить / удалить / выход): ").lower().strip()
-
-    if action == "выход":
-        print("До встречи, герой!")
+    print(f"\nInventory: {inventory} ({current_weight}/{MAX_WEIGHT} kg)")
+    action = input("Action (add / remove / exit): ").lower().strip()
+    if action == "exit":
         break
-
-    elif action == "добавить":
-        item = input("Что вы нашли? ").lower().strip()
-        
-        if item in ITEM_DATABASE:
-            weight = ITEM_DATABASE[item]
-            if current_weight + weight <= max_weight:
-                inventory.append(item)
-                current_weight += weight
-                print(f" {item} добавлен (+{weight} кг)")
-            else:
-                print(f" Слишком тяжело! Нужно выкинуть что-то весом хотя бы {current_weight + weight - max_weight} кг")
+    elif action == "add":
+        item = input("Find item: ").lower().strip()
+        weight = ITEM_DATABASE.get(item)
+        if weight is None:
+            print("Unknown item!")
+        elif current_weight + weight > MAX_WEIGHT:
+            print(f"Too heavy! Need to drop {current_weight + weight - MAX_WEIGHT:.1f} kg")
         else:
-            print(" Я не знаю, что это за предмет. Попробуйте: меч, щит, зелье, лук или золото.")
-
-    elif action == "удалить":
-        item = input("Что выкидываем? ").lower().strip()
-        
+            inventory.append(item)
+            current_weight += weight
+            print(f"Added {item} (+{weight} kg)")
+    elif action == "remove":
+        item = input("Drop item: ").lower().strip()
         if item in inventory:
             inventory.remove(item)
             current_weight -= ITEM_DATABASE[item]
-            print(f" {item} выброшен. Стало легче на {ITEM_DATABASE[item]} кг")
+            print(f"Dropped {item} (-{ITEM_DATABASE[item]} kg)")
         else:
-            print(" У вас нет такого предмета!")
-
+            print("Item not found in backpack!")
     else:
-        print("Команда не распознана. Используйте: добавить, удалить или выход.")
+        print("Invalid command!")
